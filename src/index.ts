@@ -1,6 +1,7 @@
 import express from 'express';
 import { Config } from './utils/config';
 import { BackendServerDetails } from './backend-server-details';
+import { LBServer } from './load-balancer';
 
 Config.load();
 const config = Config.getConfig();
@@ -10,6 +11,9 @@ const backendServers = config.be_servers.map(
 
 const app = express();
 const PORT = config.lbPORT;
+
+const lb = new LBServer();
+lb.init();
 
 app.get('/', (_req, res) => {
   res.send('Load Balancer v1.0');
