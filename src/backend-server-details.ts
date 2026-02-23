@@ -8,6 +8,7 @@ export interface IBackendServerDetails {
     setStatus(status: BEServerHealth): void;
     incrementRequestsServed(): void;
     resetMetrics(): void;
+    ping(): Promise<boolean>;
 }
 
 export class BackendServerDetails implements IBackendServerDetails {
@@ -38,14 +39,13 @@ export class BackendServerDetails implements IBackendServerDetails {
     }
 
     async ping(): Promise<boolean> {
-    try {
-      await HttpClient.get(`${this.url}/ping`);
-      this.setStatus(BEServerHealth.HEALTHY);
-      return true;
-    } catch (error) {
-      this.setStatus(BEServerHealth.UNHEALTHY);
-      console.error(`Health check failed for ${this.url}:`, error instanceof Error ? error.message : String(error));
-      return false;
+        try {
+            await HttpClient.get(`${this.url}/ping`);
+            this.setStatus(BEServerHealth.HEALTHY);
+            return true;
+        } catch {
+            this.setStatus(BEServerHealth.UNHEALTHY);
+            return false;
+        }
     }
-  }
 }
