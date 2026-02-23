@@ -21,6 +21,7 @@ export class LBServer {
 
     this.app = express();
     this.app.use(express.json());
+    this.registerRoutes();
 
     this.app.get("/", (_req, res) => {
       res.send("Load Balancer v1.0");
