@@ -1,4 +1,5 @@
 import {BEServerHealth} from "./utils/enums";
+import { HttpClient } from "./utils/http-client";
 
 export interface IBackendServerDetails {
     url: string;
@@ -35,4 +36,16 @@ export class BackendServerDetails implements IBackendServerDetails {
     resetMetrics(): void {
         this.requestsServedCount = 0;
     }
+
+    async ping(): Promise<boolean> {
+    try {
+      await HttpClient.get(`${this.url}/ping`);
+      this.setStatus(BEServerHealth.HEALTHY);
+      return true;
+    } catch (error) {
+      this.setStatus(BEServerHealth.UNHEALTHY);
+      console.error(`Health check failed for ${this.url}:`, error instanceof Error ? error.message : String(error));
+      return false;
+    }
+  }
 }
